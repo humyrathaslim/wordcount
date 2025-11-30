@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Word Counter</title>
+   <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h2>Real-time Word Counter</h2>
+      <div class="switch" id="themeToggle"><span></span></div>
+    </div>
+
+    <textarea id="text" placeholder="Type here... (90 word limit)"></textarea>
+
+    <div class="stats">
+      <div>Words: <span id="count">0</span> / 90</div>
+      <div>Left: <span id="left">90</span></div>
+      <div class="progress"><div id="bar"></div></div>
+    </div>
+    
+    <div class="btns">
+      <button id="clearBtn">Clear</button>
+    </div>
+  </div>
+
+<script>
+  const limit = 90;
+  const text = document.getElementById("text");
+  const countSpan = document.getElementById("count");
+  const leftSpan = document.getElementById("left");
+  const bar = document.getElementById("bar");
+  const toggle = document.getElementById("themeToggle");
+
+  // Load dark mode
+  if (localStorage.getItem("wc_dark") === "true") {
+    document.body.classList.add("dark");
+  }
+
+  toggle.onclick = () => {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("wc_dark", document.body.classList.contains("dark"));
+  };
+
+  function countWords(str) {
+    const t = str.trim();
+    return t === "" ? 0 : t.split(/\s+/).length;
+  }
+
+  function update() {
+    let words = countWords(text.value);
+
+    // enforce limit
+    if (words >=limit) {
+      let tokens = text.value.trim().split(/\s+/).slice(0, limit);
+      text.value = tokens.join(" ");
+      words = limit;
+  alert("you have reached the limit.");
+    }
+
+    countSpan.textContent = words;
+    leftSpan.textContent = limit - words;
+    bar.style.width = (words / limit) * 100 + "%";
+  }
+
+  text.addEventListener("input", update);
+  document.getElementById("clearBtn").onclick = () => {
+    text.value = "";
+    update();
+  };
+
+  update();
+</script>
+</body>
+</html>
